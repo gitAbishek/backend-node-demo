@@ -1,4 +1,5 @@
 import User from "../models/user.model";
+import mongoose from "mongoose";
 
 interface UserInput {
   email: string;
@@ -19,6 +20,15 @@ const getUsersById = async (id: string) => {
 };
 
 const updateUsersById = async (id: string, body: UserInput) => {
+  if (!mongoose.isValidObjectId(id)) {
+    throw new Error("Invalid user ID");
+  }
+  if (body.email) {
+    const existingUser = await User.findOne({ email: body.email });
+    if (existingUser && (existingUser as { _id: any })._id.toString() !== id) {
+      throw new Error("Email already in use");
+    }
+  }
   const updatedUser = await User.findByIdAndUpdate(id, body, {
     new: true,
   }).select("-password");

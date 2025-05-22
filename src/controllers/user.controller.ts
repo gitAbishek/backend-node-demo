@@ -23,8 +23,8 @@ const updateUsersById = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await userService.updateUsersById(req.params.id, req.body);
     res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
+  } catch (error: any) {
+    res.status(400).json({ message: error.message || "Server error" });
   }
 };
 
